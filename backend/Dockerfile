@@ -4,10 +4,14 @@ FROM python:3.11
 WORKDIR /app
 
 COPY requirements.txt /app/
-RUN pip3 install -r requirements.txt
+RUN python3 -m venv venv \
+    && . venv/bin/activate \
+    && pip install --upgrade pip \
+    && pip install -r requirements.txt
 
 COPY . /app
 
-EXPOSE 5000
+EXPOSE 5050
 
-CMD ["python", "app.py"]
+CMD ["/bin/bash", "-c", "source venv/bin/activate && python3 app.py"]
+

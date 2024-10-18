@@ -1,1 +1,2 @@
-# Spotofy API Functionalization here. 
+import spotify
+from spotipy.oauth2 import SpotifyOAuth
