@@ -1,0 +1,19 @@
+{
+  "name": "Full Stack Dev Environment",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "backend",  
+  "workspaceFolder": "/app",
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "/bin/bash",
+    "python.pythonPath": "/usr/local/bin/python",
+    "editor.formatOnSave": true
+  },
+  "extensions": [
+    "ms-python.python",  
+    "dbaeumer.vscode-eslint",   
+    "esbenp.prettier-vscode",   
+    "dbaeumer.vscode-standard"  
+  ],
+  "postCreateCommand": "pip install pylint && npm install", 
+  "remoteUser": "root"
+}
