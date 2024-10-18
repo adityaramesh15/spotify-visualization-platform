@@ -13,5 +13,3 @@ COPY . /app
 
 EXPOSE 5050
 
-CMD ["/bin/bash", "-c", "source venv/bin/activate && python3 app.py"]
-
