@@ -115,7 +115,7 @@ The project is containerized using Docker. To run the entire stack (frontend + b
 
 4. **Access the app**:
    - Frontend: Navigate to `http://localhost:3000` in your browser.
-   - Backend: API runs on `http://localhost:5000`.
+   - Backend: API runs on `http://localhost:5050`.
 
 ---
 
