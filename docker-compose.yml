@@ -21,4 +21,6 @@ services:
     volumes:
       - ./backend:/app
     command: >
-      /bin/bash -c "source venv/bin/activate && python3 app.py"  # Ensure virtual env is activated
+      /bin/bash -c "python app.py"
+    
+    

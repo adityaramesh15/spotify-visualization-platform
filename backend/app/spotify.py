@@ -17,3 +17,6 @@ def get_saved_tracks():
         track = item['track']
         print(f"{idx + 1}. {track['name']} by {track['artists'][0]['name']}")
     return results
+
+
+get_saved_tracks()

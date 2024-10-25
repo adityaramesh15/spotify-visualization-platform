@@ -3,13 +3,12 @@ FROM python:3.11
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN python3 -m venv venv \
-    && . venv/bin/activate \
-    && pip install --upgrade pip \
-    && pip install -r requirements.txt
+COPY requirements.txt .
 
-COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
 
 EXPOSE 5050
 
+CMD [ "python3", "app.py" ]
