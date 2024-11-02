@@ -59,14 +59,15 @@ const GraphicContainer = styled.div ``;
 
 
 const Login = () => {
+    const handleLogin = () => {
+        window.location.href = 'http://localhost:5050/login';
+    };  
     return (
         <PageContainer>
             <MainContainer>
                 <TitleContainer>Mapify</TitleContainer>
                 <ButtonContainer>
-                    <Link to="/graph">
-                        <LoginButton>Login</LoginButton>
-                    </Link>
+                    <LoginButton onClick={handleLogin}>Login with Spotify</LoginButton>
                 </ButtonContainer>
             </MainContainer>
 
