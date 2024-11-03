@@ -11,11 +11,22 @@ def login():
 @bp.route('/callback')
 def callback():
     code = request.args.get('code')
-    token_info = sp.get_access_token(code)
-    #This line below stores the api token for future api calls on this user!
-    session['token_info'] = token_info
+    if not code:
+        return "Error: No code provided.", 400
+    try:
+        token_info = sp.get_access_token(code)
+        session['token_info'] = token_info
+    except Exception as e:
+        return f"Error retrieving access token: {str(e)}", 400
     return redirect(url_for('routes.login_success'))
 
 @bp.route('/login_success')
 def login_success():
+    if 'token_info' not in session:
+        return redirect(url_for('routes.login'))
     return redirect("http://localhost:3000/graph")
+
+@bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('routes.login'))

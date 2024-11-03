@@ -23,7 +23,7 @@ const MainContainer = styled.div`
 
 `;
 
-const TitleContainer = styled.div `
+const TitleContainer = styled.div`
     padding: 15px 32px;
     text-align: center;
     font-size: 128px;
