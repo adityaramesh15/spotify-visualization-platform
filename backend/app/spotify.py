@@ -2,8 +2,11 @@ import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
+from dotenv import load_dotenv
 
 # Initialize Spotipy with your Spotify API credentials
+load_dotenv()
+
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     client_id=os.getenv("SPOTIFY_CLIENT_ID"),
     client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),

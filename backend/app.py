@@ -7,7 +7,13 @@ app = Flask(__name__)
 def spotify():
     
     data = get_saved_tracks()  
-    return data  
+    return data
+
+#ATTENTION: THIS IS CURRENTLY BROKEN
+from app.routes import bp
+app.register_blueprint(bp)  
+#END OF ATTENTION
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050)  
