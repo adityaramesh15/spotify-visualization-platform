@@ -5,7 +5,6 @@ from collections import defaultdict
 from dotenv import load_dotenv
 
 # Initialize Spotipy with your Spotify API credentials
-
 load_dotenv()
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(

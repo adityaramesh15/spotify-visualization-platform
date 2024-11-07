@@ -1,6 +1,7 @@
 import React from 'react';
 import {loginUrl} from './spotify'
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const PageContainer = styled.div `
@@ -59,9 +60,15 @@ const GraphicContainer = styled.div ``;
 
 
 const Login = () => {
+
+    //This navigation is a temp patch to help with development. change to commented out code to get routing working correctly.
+    const navigate = useNavigate();
     const handleLogin = () => {
-        window.location.href = 'http://localhost:5050/login';
+        navigate('/graph');
     };  
+    /*const handleLogin = () => {
+        window.location.href = 'http://localhost:5050/login';
+    }; */
     return (
         <PageContainer>
             <MainContainer>
