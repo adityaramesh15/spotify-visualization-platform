@@ -2,3 +2,6 @@ oauthlib
 db-sqlite3
 Flask
 spotipy
+numpy
+matplotlib
+scipy
