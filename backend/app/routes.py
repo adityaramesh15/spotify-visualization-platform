@@ -1,6 +1,3 @@
-#ATTENTION: THIS IS CURRENTLY BROKEN.
-
-
 from flask import Blueprint, redirect, session, request, url_for
 from spotify import sp
 

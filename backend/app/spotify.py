@@ -1,15 +1,14 @@
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from config import Config
 from collections import defaultdict
 from dotenv import load_dotenv
 
-# Initialize Spotipy with your Spotify API credentials
-load_dotenv()
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-    client_id=os.getenv("SPOTIFY_CLIENT_ID"),
-    client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
+    client_id=Config.SPOTIFY_CLIENT_ID, 
+    client_secret=Config.SPOTIFY_CLIENT_SECRET,
     redirect_uri="http://localhost:5050/callback",  
     scope="user-library-read user-top-read"  
 ))
@@ -28,7 +27,7 @@ def get_genre_durations():
         
         
         for genre in artist_info['genres']:
-            genre_durations[genre] += track_duration_ms / 60000  # Convert ms to minutes
+            genre_durations[genre] += track_duration_ms / 60000 
 
     return genre_durations
 

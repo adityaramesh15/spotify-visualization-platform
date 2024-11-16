@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  backend:
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    volumes:
+      - ..:/app:cached
+      - ~/.gitconfig:/root/.gitconfig
+    environment:
+      - PYTHONPATH=/app

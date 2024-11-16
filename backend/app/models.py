@@ -1,7 +1,3 @@
-# Calculations for models here. 
-
-#Example Heat Map below with random points
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
