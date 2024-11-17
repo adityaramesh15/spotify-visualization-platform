@@ -105,4 +105,39 @@ const Graph = () => {
     );
 };
 
+
+const getTokenFromURL = ()=> {
+    return window.location.hash
+        .substring(1)
+        .split('&')
+        .reduce((initial, item)=>{
+            let parts = item.split("=");
+            initial[parts[0]] = decodeURIComponent(parts[1]);
+
+            return initial
+        }, {});
+}
+
+export const sendTokenToBackend = async () => {
+    const tokenData = getTokenFromURL();
+    if (tokenData.access_token) {
+        try {
+            const response = await fetch("http://localhost:5050/api/save-user", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(tokenData)
+            });
+
+            const result = await response.json();
+            console.log(result.message);
+        } catch (error) {
+            console.error("Error sending token to backend:", error);
+        }
+    } else {
+        console.error("Access token is missing from the URL.");
+    }
+};
+
 export default Graph;
