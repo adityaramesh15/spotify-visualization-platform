@@ -1,37 +1,27 @@
-import os
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
-from dotenv import load_dotenv
 
-# Initialize Spotipy with your Spotify API credentials
-load_dotenv()
+# 10 sub genres to 1 main genre
+class Spotify:
+    def __init__(self, access_token=None):
+        self.sp = spotipy.Spotify(auth=access_token) if access_token else None
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-    client_id=os.getenv("SPOTIFY_CLIENT_ID"),
-    client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-    redirect_uri="http://localhost:5050/callback",  
-    scope="user-library-read user-top-read"  
-))
+    def get_id(self):
+        return self.sp.me() if self.sp else None
 
-def get_genre_durations():
-    genre_durations = defaultdict(int)
-
-    results = sp.current_user_top_tracks(time_range='long_term', limit=50)
-    for item in results['items']:
-        track = item
-        track_duration_ms = track['duration_ms']
-
+    def get_genre_durations(self):
+        if not self.sp:
+            raise ValueError("Spotify object not authenticated.")
         
-        artist_id = track['artists'][0]['id']
-        artist_info = sp.artist(artist_id)
-        
-        
-        for genre in artist_info['genres']:
-            genre_durations[genre] += track_duration_ms / 60000  # Convert ms to minutes
+        genre_durations = defaultdict(int)
+        results = self.sp.current_user_top_tracks(time_range='long_term', limit=50)
+        for item in results['items']:
+            track = item
+            track_duration_ms = track['duration_ms']
+            artist_id = track['artists'][0]['id']
+            artist_info = self.sp.artist(artist_id)
 
-    return genre_durations
+            for genre in artist_info['genres']:
+                genre_durations[genre] += track_duration_ms / 60000
 
-genre_durations = get_genre_durations()
-for genre, minutes in genre_durations.items():
-    print(f"{genre}: {minutes:.2f} minutes")
+        return genre_durations

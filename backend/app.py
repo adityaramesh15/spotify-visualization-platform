@@ -1,19 +1,22 @@
-from flask import Flask, request, redirect
-from app.spotify import sp  
+from flask import Flask
+from app.routes import bp
+from app.database import db
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-@app.route('/spotify', methods=['GET'])
-def spotify():
-    data = sp.get_saved_tracks()  
-    return data
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.secret_key = "supersecretkey"  
 
-@app.route('/callback')
-def callback():
-    token_info = sp.auth_manager.get_access_token(request.args['code'])
-    sp.auth_manager.token = token_info['access_token']
-    return redirect('/spotify')  
+    db.init_app(app)
+    app.register_blueprint(bp)
+    return app
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5050)
+    app = create_app()
 
+    with app.app_context():
+        db.create_all()
+
+    app.run(host='localhost', port=5050, debug=True)
