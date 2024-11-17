@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify, send_file
 from spotify import Spotify
 from map import GenreMap
-from datetime import datetime
 from database import db, User, Genre
 import io
 

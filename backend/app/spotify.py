@@ -1,7 +1,7 @@
 import spotipy
 from collections import defaultdict
 
-
+# 10 sub genres to 1 main genre
 class Spotify:
     def __init__(self, access_token=None):
         self.sp = spotipy.Spotify(auth=access_token) if access_token else None
