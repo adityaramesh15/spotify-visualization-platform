@@ -56,24 +56,7 @@ const LoginButton = styled.button`
 const GraphicContainer = styled.div ``;
 
 
-
-
-/*
-OAuth steps
-1. Call Oauth
-2. 
-3. 
-4. 
-5. 
-*/
-
 const Login = () => {
-
-    //This navigation is a temp patch to help with development. change to commented out code to get routing working correctly.
-    const navigate = useNavigate();
-    /*const handleLogin = () => {
-        navigate('/graph');
-    };*/ 
     const handleLogin = () => {
         window.location.href = loginUrl;
     };

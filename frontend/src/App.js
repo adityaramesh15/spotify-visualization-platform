@@ -1,6 +1,7 @@
 import React from 'react';
 import Login from './pages/Login';
 import Graph from './pages/Graph';
+import Callback from './pages/Callback'
 import {
     BrowserRouter as Router,
     Routes,
@@ -20,6 +21,7 @@ const App = () => {
                     path="/graph"
                     element={<Graph />}
                 />
+                <Route path="/callback" element={<Callback />} />
             </Routes>
         </Router>);
 };
