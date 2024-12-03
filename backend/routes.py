@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, send_file
-from spotify import Spotify
+from spotipy import Spotify
 from map import GenreMap
 from database import db, User, Genre
 import io
@@ -22,6 +22,10 @@ def save_user():
         db.session.commit()
 
     return jsonify({'message': 'User saved successfully!'})
+
+@bp.route('/test', methods=['GET'])
+def test():
+    return 'This is a test message'
 
 
 @bp.route('/api/genre-durations', methods=['POST'])
