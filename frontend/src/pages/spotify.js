@@ -1,8 +1,6 @@
 export const authEndpoint = "https://accounts.spotify.com/authorize";
 const redirectUri = "http://localhost:3000/callback"
-const clientID = "558fad49211e4702a3505295e6a45860"
-//const clientID = process.env.SPOTIFY_CLIENT_ID
-console.log(clientID);
+const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID
 
 const scopes = [
     "user-library-read",
