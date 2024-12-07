@@ -1,10 +1,14 @@
 from flask import Blueprint, request, jsonify, send_file
-from spotipy import Spotify
+from spotify import Spotify
 from map import GenreMap
 from database import db, User, Genre
 import io
 
 bp = Blueprint('routes', __name__)
+
+@bp.route('/api/test', methods=['OPTIONS', 'GET'])
+def test_route():
+    return {"message": "CORS is working!"}, 200
 
 @bp.route('/api/save-user', methods=['POST'])
 def save_user():
