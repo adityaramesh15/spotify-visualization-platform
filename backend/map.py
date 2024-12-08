@@ -10,13 +10,14 @@ class GenreMap:
         self.sigma = sigma
         
     
-    def generate_map(self, genres):
+    def generate_map(self, tracks):
         matrix = np.zeros((self.matrix_size, self.matrix_size))
         
-        np.random.seed(0)
-        for _, value in genres.items():
-            x, y = np.random.randint(0, self.matrix_size, size=2)
-            matrix[x, y] = value
+        for (x, y), mins in tracks.items():
+                matrix[y * self.matrix_size, x * self.matrix_size] += mins  # (y, x) for correct image orientation
+                
+                
+        #smoothing can be removed if it is no longer needed by setting sigma to 0
         
         smoothed_matrix = gaussian_filter(matrix, sigma=self.sigma)
 
