@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+
 const PageContainer = styled.div `
     background-color: #e97451; 
     display: flex;
@@ -55,20 +56,10 @@ const LoginButton = styled.button`
 const GraphicContainer = styled.div ``;
 
 
-
-
-
-
 const Login = () => {
-
-    //This navigation is a temp patch to help with development. change to commented out code to get routing working correctly.
-    const navigate = useNavigate();
     const handleLogin = () => {
-        navigate('/graph');
-    };  
-    /*const handleLogin = () => {
-        window.location.href = 'http://localhost:5050/login';
-    }; */
+        window.location.href = loginUrl;
+    };
     return (
         <PageContainer>
             <MainContainer>
