@@ -1,6 +1,6 @@
 import spotipy
 from collections import defaultdict
-
+import pandas as pd
 # 10 sub genres to 1 main genre
 class Spotify:
     def __init__(self, access_token=None):
@@ -17,18 +17,27 @@ class Spotify:
 
         # get track ID's and subsequent features
         track_ids = [item['id'] for item in results['items']]
-        audio_features = self.sp.audio_features(track_ids)
 
-        # dict keyed by (acousticness, energy), value as mins listened
         acoustic_energy_map = {}
-        for item, features in zip(results['items'], audio_features):
-            track_duration_ms = item['duration_ms']
-            minutes_listened = track_duration_ms / 60000.0
 
-            acousticness = features['acousticness']
-            energy = features['energy']
+        # read csv with pandas
+        df = pd.read_csv('../data/tracks_features.csv')
+
+        # only include rows with track_ids in our top tracks
+        df_filtered = df[df['id'].isin(track_ids)]
+
+        for _, row in df_filtered.iterrows():
+            
+            # get acousticness and energy 
+            acousticness = float(row['acousticness']) #if row['acousticness'] else 0.0
+            energy = float(row['energy']) #if row['energy'] else 0.0
+            minutes_listened = float(row['energy']) / 60000.0
+            
 
             # add to minutes listened if key is already in map, otherwise default to zero and add new value
             acoustic_energy_map[(acousticness, energy)] = acoustic_energy_map.get((acousticness, energy), 0) + minutes_listened
 
         return acoustic_energy_map
+        
+
+        
