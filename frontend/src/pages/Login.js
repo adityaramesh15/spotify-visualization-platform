@@ -199,7 +199,7 @@ function RotatingGraph() {
         position: {
             x: -0.3,
             y: 0.0,
-            z: 0.50,
+            z: 0.30,
         },
         rotation: {
             x: 4.75,

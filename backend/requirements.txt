@@ -1,9 +1,7 @@
-oauthlib
-db-sqlite3
 Flask
 spotipy
 python-dotenv
 numpy
 matplotlib
 scipy
-
+flask-sqlalchemy
