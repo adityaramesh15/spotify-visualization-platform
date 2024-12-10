@@ -10,7 +10,7 @@ bp = Blueprint('routes', __name__)
 def test_route():
     return {"message": "CORS is working!"}, 200
 
-@bp.route('/api/save-UserDB', methods=['POST'])
+@bp.route('/api/save-user', methods=['POST'])
 def save_UserDB():
     data = request.json
     access_token = data.get('access_token')
