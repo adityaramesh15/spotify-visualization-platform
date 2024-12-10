@@ -9,7 +9,7 @@ class Spotify:
     def get_id(self):
         return self.sp.me() if self.sp else None
 
-    def get_genre_durations(self):
+    def get_acoustic_map(self):
         if not self.sp:
             raise ValueError("Spotify object not authenticated.")
 
