@@ -41,13 +41,10 @@ def get_raw_acoustic_map():
     if not user:
         return jsonify({'error': 'UserDB not found'}), 404
     
-
-    
-    
     genres = GenreDB.query.filter_by(user_id=UserDB.id).all()
     if genres:
         genre_dict = {
-            tuple(map(int, genre.coord.split(','))): genre.duration for genre in genres
+            tuple(map(float, genre.coord.split(','))): genre.duration for genre in genres
         }
         return jsonify(genre_dict)
 

@@ -6,3 +6,5 @@ matplotlib
 scipy
 flask-sqlalchemy
 pandas
+flask-migrate
+flask_cors
