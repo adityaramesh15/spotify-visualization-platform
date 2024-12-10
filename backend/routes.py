@@ -19,10 +19,10 @@ def save_UserDB():
     spotify_UserDB = spotify.get_id()
     spotify_id = spotify_UserDB['id']
 
-    UserDB = UserDB.query.filter_by(spotify_id=spotify_id).first()
-    if not UserDB:
-        UserDB = UserDB(spotify_id=spotify_id)
-        db.session.add(UserDB)
+    user = UserDB.query.filter_by(spotify_id=spotify_id).first()
+    if not user:
+        user = UserDB(spotify_id=spotify_id)
+        db.session.add(user)
         db.session.commit()
 
     return jsonify({'message': 'UserDB saved successfully!'})
@@ -37,9 +37,12 @@ def get_raw_acoustic_map():
     spotify_UserDB = spotify.get_id()
     spotify_id = spotify_UserDB['id']
 
-    UserDB = UserDB.query.filter_by(spotify_id=spotify_id).first()
-    if not UserDB:
+    user = UserDB.query.filter_by(spotify_id=spotify_id).first()
+    if not user:
         return jsonify({'error': 'UserDB not found'}), 404
+    
+
+    
     
     genres = GenreDB.query.filter_by(user_id=UserDB.id).all()
     if genres:
@@ -48,11 +51,15 @@ def get_raw_acoustic_map():
         }
         return jsonify(genre_dict)
 
+    
+
     genre_durations = spotify.get_acoustic_map()  
     for coord, duration in genre_durations.items():
         coord_str = f"{coord[0]},{coord[1]}"  
         genre = GenreDB(user_id=UserDB.id, coord=coord_str, duration=duration)
         db.session.add(genre)
+
+    
 
     db.session.commit()
     return jsonify(genre_durations)
