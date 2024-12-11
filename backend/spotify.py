@@ -23,15 +23,15 @@ class Spotify:
         #user_playlist_tracks(user=None, playlist_id=None, fields=None, limit=100, offset=0, market=None)
         #playlist_tracks(playlist_id, fields=None, limit=100, offset=0, market=None, additional_types=('track',))
         
-        #results = self.sp.playlist_tracks(playlist_id= self.sp.current_user_playlists(limit=50, offset=0)['items'][0]['id'], limit=100)
-        results = self.sp.current_user_top_tracks(time_range='long_term', limit=50)
+        results = self.sp.playlist_tracks(playlist_id= self.sp.current_user_playlists(limit=50, offset=0)['items'][0]['id'], limit=100)
+        #results = self.sp.current_user_top_tracks(time_range='long_term', limit=50)
         
         
         # get track ID's and subsequent features
         
         
-        #track_ids = [item['track']['id'] for item in results['items'] if item['track']]
-        track_ids = [item['id'] for item in results['items']]
+        track_ids = [item['track']['id'] for item in results['items'] if item['track']]
+        #track_ids = [item['id'] for item in results['items']]
 
         acoustic_energy_map = {}
 
