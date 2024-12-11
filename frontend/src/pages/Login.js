@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader, MathUtils } from 'three';
 import { useNavigate } from 'react-router-dom';
+import {loginUrl} from './spotify'
 import styled from 'styled-components';
 
 const PageContainer = styled.div`
@@ -206,15 +207,9 @@ function RotatingGraph() {
 };
 
 const Login = () => {
-
-    //This navigation is a temp patch to help with development. change to commented out code to get routing working correctly.
-    const navigate = useNavigate();
     const handleLogin = () => {
-        navigate('/graph');
+        window.location.href = loginUrl;
     };
-    /*const handleLogin = () => {
-        window.location.href = 'http://localhost:5050/login';
-    }; */
     return (
         <PageContainer>
             <MainContainer>
