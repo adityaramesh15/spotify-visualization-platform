@@ -4,6 +4,7 @@ from scipy.ndimage import gaussian_filter
 from PIL import Image
 
 
+
 class GenreMap:
     def __init__(self, matrix_size=100, sigma=5):
         self.matrix_size = matrix_size
@@ -13,8 +14,10 @@ class GenreMap:
     def generate_map(self, tracks):
         matrix = np.zeros((self.matrix_size, self.matrix_size))
         
-        for (x, y), mins in tracks.items():
-                matrix[y * self.matrix_size, x * self.matrix_size] += mins  # (y, x) for correct image orientation
+        for string, mins in tracks.items():
+                x = float(string.split(',')[0])
+                y = float(string.split(',')[1])
+                matrix[int(y * self.matrix_size), int(x * self.matrix_size)] += mins  # (y, x) for correct image orientation
                 
                 
         #smoothing can be removed if it is no longer needed by setting sigma to 0
