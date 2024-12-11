@@ -1,12 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader, MathUtils } from 'three';
-import { loginUrl } from './spotify'
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useControls } from 'leva'
-import { Texture } from '@react-three/drei';
 
 const PageContainer = styled.div`
     background-color: #e97451; 
@@ -195,23 +191,10 @@ function RotatingGraph() {
         meshRef.current.rotation.z = 0.5 * clock.getElapsedTime();
         meshRef.current.material.uniforms.u_time.value = 0.4 * clock.getElapsedTime();
     });
-    const graphCtrl = useControls('Login Graph', {
-        position: {
-            x: -0.3,
-            y: 0.0,
-            z: 0.30,
-        },
-        rotation: {
-            x: 4.75,
-            y: 0.0,
-            z: 0.0,
-        },
-    })
-
     return (
         <mesh ref={meshRef}
-            position={[graphCtrl.position.x, graphCtrl.position.y, graphCtrl.position.z]}
-            rotation={[graphCtrl.rotation.x, graphCtrl.rotation.y, graphCtrl.rotation.z]}>
+            position={[0.0, 0.0, 0.30]}
+            rotation={[4.75, 0.0, 0.0]}>
             <planeGeometry args={[2.5, 2.5, 128, 128]} />
             <shaderMaterial
                 fragmentShader={loginFragmentShader}
@@ -232,14 +215,6 @@ const Login = () => {
     /*const handleLogin = () => {
         window.location.href = 'http://localhost:5050/login';
     }; */
-    const cameraCtrl = useControls('Camera', {
-        fov: 60,
-        position: {
-            x: 0,
-            y: 0,
-            z: 0,
-        }
-    })
     return (
         <PageContainer>
             <MainContainer>
