@@ -35,8 +35,8 @@ class Spotify:
             
 
             # add to minutes listened if key is already in map, otherwise default to zero and add new value
-            acoustic_energy_map[(acousticness, energy)] = acoustic_energy_map.get((acousticness, energy), 0) + minutes_listened
-
+            acoustic_energy_map[f"{acousticness},{energy}"] = acoustic_energy_map.get((acousticness, energy), 0) + minutes_listened
+            #(acousticness, energy)
         return acoustic_energy_map
         
 

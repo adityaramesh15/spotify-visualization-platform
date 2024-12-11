@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from routes import bp
-from database import db, migrate
+from database import db#, migrate
 
 def create_app():
     app = Flask(__name__)
@@ -14,7 +14,7 @@ def create_app():
     app.register_blueprint(bp)
     
     db.init_app(app)
-    migrate.init_app(app, db)
+    #migrate.init_app(app, db)
     
     return app
 
