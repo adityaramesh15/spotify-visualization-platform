@@ -103,27 +103,28 @@ const graphFragmentShader = `
 varying vec2 vUv;
 varying float vDisp;
 
-vec3 colorB = vec3(0.31, 0.90, 0.40);
-vec3 colorA = vec3(0.04, 0.02, 0.33);
+vec3 acoustic_high = vec3(0.52, 0.05, 0.05);
+vec3 acoustic_low = vec3(0.08, 0.05, 0.52);
+vec3 acoustic_high_intense = vec3(1.00, 0.60, 0.60);
+vec3 acoustic_low_intense = vec3(0.69, 0.73, 1.00);
+vec3 intensity_high = vec3(0.96, 0.99, 0.98);
 
 void main() {
-  vec3 color = mix(colorA, colorB, vDisp);
+  vec3 a_color = mix(acoustic_low, acoustic_low_intense, vDisp);
+  vec3 b_color = mix(acoustic_high, acoustic_high_intense, vDisp);
 
-  gl_FragColor = vec4(color,1.0);
+  vec3 i_color = mix(a_color, b_color, vUv.x);
+
+  gl_FragColor = vec4(i_color,1.0);
 }
 `
 
 const pointVertexShader = `
-varying vec2 vUv;
-varying float vDisp;
-
-uniform sampler2D u_texture;
-uniform float u_intensity;
+uniform float u_value;
+uniform float u_max;
 
 void main() {
-  vUv = uv;
-  vDisp = texture2D(u_texture, uv).b;
-  vec4 pos = vec4((position + vec3(0.0, 0.1, 0.0) * (vDisp) * u_intensity), 1.0);
+  vec4 pos = vec4(position, 1.0);
   vec4 modelPosition = modelMatrix * pos;
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -131,13 +132,27 @@ void main() {
   gl_Position = projectedPosition;
 }
 `
-// const useStore = create((set) => ({
-//     displacementMapArray: useLoader(TextureLoader, ['/textures/2monthsDemo.png', '/textures/6monthsDemo.png', '/textures/12monthsDemo.png']),
-//     texture: state.displacementMapArray[0],
-//     updateTexture2Months: () => set({ texture: state.displacementMapArray[0] }),
-//     updateTexture6Months: () => set({ texture: state.displacementMapArray[1] }),
-//     updateTexture12Months: () => set({ texture: state.displacementMapArray[2] }),
-// }))
+
+const pointFragmentShader = `
+    uniform float u_value;
+    uniform float u_max;
+
+    vec3 acoustic_high = vec3(1.00, 0.14, 0.14);
+    vec3 acoustic_low = vec3(0.15, 0.09, 0.98);
+
+    void main() {
+        vec3 color = mix(acoustic_low, acoustic_high, u_value);
+        gl_FragColor = vec4(color,1.0);
+}
+`
+function vertexSort(a, b) {
+    if (a[2] === b[2]) {
+        return 0;
+    }
+    else {
+        return (a[2] < b[2]) ? 1 : -1;
+    }
+}
 
 function Map() {
     const meshRef = React.useRef();
@@ -193,41 +208,34 @@ function Map() {
         "0.57,0.04": 6.8,
         "0.29,0.58": 24.9
     };
-    const [grouped_vertices, setGroupedVertices] = useState([[]]);
-    // const displacementMap = useStore((state) => state.texture);
-    const displacementMapArray = useLoader(TextureLoader, ['/textures/genre_map_output.png', '/textures/6monthsDemo.png', '/textures/12monthsDemo.png']);
+    const [grouped_vertices, setGroupedVertices] = useState([]);
+    const [max_weight, setMaxWeight] = useState(0);
+    const displacementMapArray = useLoader(TextureLoader, ['/textures/genre_map_output.png', '/textures/genre_map_test_unweighted.png', '/textures/genre_map_test_weighted.png']);
     const displacementMap = displacementMapArray[0];
-    // let history = 0;
     useEffect(() => {
         let dummy_vertices = [[]];
-        const vertices = meshRef.current.geometry.attributes.position.array;
         Object.entries(acoustic_energy_map).map(([key, value]) => {
+            if (value > max_weight) {
+                setMaxWeight(value);
+            }
             const xy = key.split(',');
             const x = MathUtils.mapLinear(Number(xy[0]), 0.0, 1.0, -5.0, 5.0);
-            const y = MathUtils.mapLinear(Number(xy[1]), 0.0, 1.0, -5.0, 5.0);
-            const val = Number(value);
-            const pt = [x, y, val];
+            const y = MathUtils.mapLinear(Number(xy[1]), 0.0, 1.0, 5.0, -5.0);
+            const pt = [x, y, value, xy[0], xy[1]];
             dummy_vertices.push(pt);
-        })
-        setGroupedVertices(dummy_vertices);
-        console.log(grouped_vertices[0][0])
-        return () => {
-            dummy_vertices = null;
-        }
+        });
+        dummy_vertices.sort(vertexSort);
+        const top_five = dummy_vertices.slice(0, 5);
+        setGroupedVertices(top_five);
     }, []);
-    // const changeTexture = () => {
-    //     history += 1;
-    //     history = history % 3;
-    //     setDisplacementMap(displacementMapArray[history]);
-    // };
+
     return (
         <mesh ref={meshRef} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[10, 10, 128, 128]} />
             {/* <boxGeometry args={[10, 10, 2, 128, 128, 2]} /> */}
-            {/* <TextOnHover position={[-5, 5, 0]} radius={2} u_texture={displacementMap} u_intensity={3.0} /> */}
-            {/* <TextOnHover position={[grouped_vertices[1][0], grouped_vertices[1][1], 0]} radius={2} u_texture={displacementMap} u_intensity={3.0} />
-            <TextOnHover position={[grouped_vertices[2][0], grouped_vertices[2][1], 0]} radius={2} u_texture={displacementMap} u_intensity={3.0} />
-            <TextOnHover position={[grouped_vertices[3][0], grouped_vertices[3][1], 0]} radius={2} u_texture={displacementMap} u_intensity={3.0} /> */}
+            {grouped_vertices.length > 0 && grouped_vertices.map(([x, y, value, ox, oy]) => (
+                <TextOnHover position={[x, y, 6]} u_value={ox} u_max={max_weight} radius={0.15} x={ox} y={oy} />
+            ))}
             <shaderMaterial
                 fragmentShader={graphFragmentShader}
                 vertexShader={graphVertexShader}
@@ -243,13 +251,15 @@ function TextOnHover(props) {
     const [isHovered, setIsHovered] = useState(false);
     const meshRef = React.useRef();
     const textRef = React.useRef();
+    const x = props.x;
+    const y = props.y;
     useFrame(({ clock }) => {
         textRef.visible = isHovered;
     });
     const uniforms = useMemo(
         () => ({
-            u_texture: { value: props.u_texture },
-            u_intensity: { value: props.u_intensity },
+            u_value: { value: props.u_value },
+            u_max: { value: props.u_max },
         }),
         []
     );
@@ -258,15 +268,17 @@ function TextOnHover(props) {
             <sphereGeometry
                 args={[props.radius, 10, 10]}
             />
+
             <shaderMaterial
-                fragmentShader={graphFragmentShader}
+                fragmentShader={pointFragmentShader}
                 vertexShader={pointVertexShader}
                 uniforms={uniforms}
             />
             {isHovered && (
                 <Html>
-                    <div className='VertexPopup'>
-                        <p>DISPLAY STYLED COMPONENT WITH GENRE NAME AND HOURS LISTENED</p>
+                    <div className='VertexPopup' color="white">
+                        <p>Acousticness: {x}</p>
+                        <p>Energy: {y}</p>
                     </div>
                 </Html>
             )}
