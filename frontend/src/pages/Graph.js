@@ -30,15 +30,16 @@ const DetailContainer = styled.div`
 `;
 
 const DetailBox = styled.div`
-    width: 300px; /* Adjust width as needed */
-    height: 450px; /* Adjust height as needed */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.6); /* Subtle shadow */
-    padding: 25px; /* Padding inside the box */
+    width: 300px;
+    height: 450px;
+    border-radius: 15px;
+    box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.6);
+    padding: 25px;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between items */
-    background-color: #e97451;
+    gap: 20px;
+    //background-color: #e97451;
+    background-color: #FFFDD0;
     font-family: 'Neue Haas Grotesk', sans-serif;
     font-size: 32px;
 `;
