@@ -6,16 +6,40 @@ import { create } from 'zustand';
 import styled from 'styled-components';
 
 const PageContainer = styled.div`
-    background-color: #13144f; 
+    background-color: #F7CAC9; 
     display: flex;
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 7fr 2fr; // Two equal-width columns
+    grid-template-columns: 4fr 1fr; // Two equal-width columns
     gap: 200px; // Adjust spacing between columns as needed
 
     @media (max-width: 768px) {
         grid-template-columns: 1fr; // Single column on smaller screens
+        grid-template-rows: auto auto; // Stack rows on smaller screens
     }
+`;
+
+const DataContainer = styled.div`
+    display: grid;
+    grid-template-rows: 5fr 1fr; // Two equal-width columns
+`;
+
+const DetailContainer = styled.div`
+    padding: 60px;
+`;
+
+const DetailBox = styled.div`
+    width: 300px; /* Adjust width as needed */
+    height: 450px; /* Adjust height as needed */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.6); /* Subtle shadow */
+    padding: 25px; /* Padding inside the box */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between items */
+    background-color: #e97451;
+    font-family: 'Neue Haas Grotesk', sans-serif;
+    font-size: 32px;
 `;
 
 const ButtonContainer = styled.div`
@@ -24,19 +48,24 @@ const ButtonContainer = styled.div`
     align-items: start;
 `;
 
-const LeftSidebarContainer = styled.div`
-    padding: 60px;
-`;
-
 const GraphicContainer = styled.div`
     height: 100%;
     width: 100%;
     align-items: center;
 `;
 
-const RightSidebarContainer = styled.div`
-    padding: 60px;
-`
+const BlurbContainer = styled.div`
+    //marginLeft:50px;
+    margin: 30px;
+    padding-left: 20px;
+`;
+
+const BlurbBox = styled.div`
+    color: white;
+    opacity: 0.8;
+    font-family: 'Neue Haas Grotesk', sans-serif;
+    font-size: 48px;
+`;
 
 const HistoryButton = styled.button`
     background-color: #1DB954;
@@ -258,37 +287,45 @@ const Graph = () => {
     // }
     return (
         <PageContainer>
-            <GraphicContainer>
-                <Canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} camera={
-                    {
-                        fov: 65,
-                        position: [0.0, 5.5, 15.0],
-                    }
-                } shadows>
-                    {/*Toggle grid and axes*/}
-                    {isTesting ? <axesHelper args={[2]} /> : null}
-                    {isTesting ? <gridHelper /> : null}
-                    {/*Instantiate rotating box as functional component*/}
-                    <OrbitControls
-                        enablePan={false}
-                        enableDamping={true}
-                        dampingFactor={0.035}
-                        maxPolarAngle={3 * Math.PI / 8}
-                        minPolarAngle={-Math.PI / 4}
-                        minDistance={10.0}
-                        maxDistance={20.0}
+            <DataContainer>
+                <GraphicContainer>
+                    <Canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} camera={
+                        {
+                            fov: 65,
+                            position: [0.0, 5.5, 15.0],
+                        }
+                    } shadows>
+                        {/*Toggle grid and axes*/}
+                        {isTesting ? <axesHelper args={[2]} /> : null}
+                        {isTesting ? <gridHelper /> : null}
+                        {/*Instantiate rotating box as functional component*/}
+                        <OrbitControls
+                            enablePan={false}
+                            enableDamping={true}
+                            dampingFactor={0.035}
+                            maxPolarAngle={3 * Math.PI / 8}
+                            minPolarAngle={-Math.PI / 4}
+                            minDistance={10.0}
+                            maxDistance={20.0}
 
-                        zoomSpeed={0.5}
-                    />
-                    <Map ref={mapRef} />
-                    <Stats />
-                </Canvas>
-            </GraphicContainer>
-            <RightSidebarContainer>
-                <ButtonContainer>
-                    GENRE DATA
-                </ButtonContainer>
-            </RightSidebarContainer>
+                            zoomSpeed={0.5}
+                        />
+                        <Map ref={mapRef} />
+                    </Canvas>
+                </GraphicContainer>
+                <BlurbContainer>
+                    <BlurbBox>
+                        Acoustic & Energy Map.
+                    </BlurbBox>
+                </BlurbContainer>
+            </DataContainer>
+            
+            <DetailContainer>
+                <DetailBox>
+                    Genre Data
+                </DetailBox>
+                
+            </DetailContainer>
         </PageContainer>
     );
 };
