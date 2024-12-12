@@ -21,7 +21,8 @@ const PageContainer = styled.div`
 
 const DataContainer = styled.div`
     display: grid;
-    grid-template-rows: 5fr 1fr; // Two equal-width columns
+    //grid-template-rows: 5fr 1fr; // Two equal-width columns
+    position:relative;
 `;
 
 const DetailContainer = styled.div`
@@ -58,6 +59,7 @@ const BlurbContainer = styled.div`
     //marginLeft:50px;
     margin: 30px;
     padding-left: 20px;
+    position: absolute;
 `;
 
 const BlurbBox = styled.div`
