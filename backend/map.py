@@ -13,17 +13,22 @@ class GenreMap:
     
     def generate_map(self, tracks):
         matrix = np.zeros((self.matrix_size, self.matrix_size))
-        
+        #val = 10
+        #smoothed_matrix = matrix.copy()
         for string, mins in tracks.items():
                 x = float(string.split(',')[0])
                 y = float(string.split(',')[1])
-                matrix[int(y * self.matrix_size), int(x * self.matrix_size)] += mins  # (y, x) for correct image orientation
+                
+                matrix[int(y * self.matrix_size), int(x * self.matrix_size)] += mins #* val  # (y, x) for correct image orientation
+                # smoothed_matrix += gaussian_filter(matrix, sigma = val)
+                # if(val != 3):
+                #     val -= .25
+                
                 
                 
         #smoothing can be removed if it is no longer needed by setting sigma to 0
         
         smoothed_matrix = gaussian_filter(matrix, sigma=self.sigma)
-
         normalized_matrix = smoothed_matrix - smoothed_matrix.min()
         if normalized_matrix.max() != 0:
             normalized_matrix = normalized_matrix / normalized_matrix.max()
