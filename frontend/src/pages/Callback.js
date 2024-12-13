@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../stores/authStore';
 
 const Callback = () => {
     const navigate = useNavigate();
+    const setGenreDurations = useAuthStore((state) => state.setGenreDurations);
 
     const getTokenFromURL = () => {
         try {
@@ -20,6 +22,28 @@ const Callback = () => {
         }
     };
 
+    const fetchGenreDurations = async (accessToken) => {
+        try {
+            const response = await fetch('http://localhost:5050/api/genre-durations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ access_token: accessToken }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Fetched genre durations:', data);
+                setGenreDurations(data);
+                navigate('/graph');
+            } else {
+                console.error('Error fetching genre durations:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error fetching genre durations:', error);
+        }
+    };
+
     const saveUserToBackend = async (access_token) => {
         try {
             
@@ -33,7 +57,7 @@ const Callback = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Backend response:', data);
-                navigate('/graph');
+                //navigate('/graph');
                 
             } else {
                 console.error('Error from backend:');
@@ -53,6 +77,7 @@ const Callback = () => {
 
         if (_spotifyToken) {
             saveUserToBackend(_spotifyToken);
+            fetchGenreDurations(_spotifyToken);
         } else {
             console.error('Access token not found in URL');
         }

@@ -22,16 +22,19 @@ const PageContainer = styled.div`
 const DataContainer = styled.div`
     display: grid;
     //grid-template-rows: 5fr 1fr; // Two equal-width columns
-    position:relative;
 `;
 
 const DetailContainer = styled.div`
     padding: 60px;
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    z-index: 2;
 `;
 
 const DetailBox = styled.div`
-    width: 300px;
-    height: 450px;
+    width: 250px;
+    height: 375px;
     border-radius: 15px;
     box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.6);
     padding: 25px;
@@ -42,6 +45,7 @@ const DetailBox = styled.div`
     background-color: #FFFDD0;
     font-family: 'Neue Haas Grotesk', sans-serif;
     font-size: 32px;
+    user-select: none;
 `;
 
 const ButtonContainer = styled.div`
@@ -54,6 +58,10 @@ const GraphicContainer = styled.div`
     height: 100%;
     width: 100%;
     align-items: center;
+    position:absolute;
+    left: -200px;
+    width: calc(100vw + 200px);
+    z-index:1;
 `;
 
 const BlurbContainer = styled.div`
@@ -61,6 +69,9 @@ const BlurbContainer = styled.div`
     margin: 30px;
     padding-left: 20px;
     position: absolute;
+    top: 30px;
+    left: 20px;
+    z-index: 2;
 `;
 
 const BlurbBox = styled.div`
@@ -68,6 +79,7 @@ const BlurbBox = styled.div`
     opacity: 0.8;
     font-family: 'Neue Haas Grotesk', sans-serif;
     font-size: 48px;
+    user-select: none;
 `;
 
 const HistoryButton = styled.button`
@@ -155,7 +167,7 @@ function vertexSort(a, b) {
     }
 }
 
-function Map() {
+function Map({onHover}) {
     const meshRef = React.useRef();
     const acoustic_energy_map = {
         "0.10,0.23": 12.5,
@@ -211,8 +223,9 @@ function Map() {
     };
     const [grouped_vertices, setGroupedVertices] = useState([]);
     const [max_weight, setMaxWeight] = useState(0);
-    const displacementMapArray = useLoader(TextureLoader, ['/textures/genre_map_output.png', '/textures/genre_map_test_unweighted.png', '/textures/genre_map_test_weighted.png']);
+    const displacementMapArray = useLoader(TextureLoader, ['/textures/genre_map_output.png']);
     const displacementMap = displacementMapArray[0];
+
     useEffect(() => {
         let dummy_vertices = [[]];
         Object.entries(acoustic_energy_map).map(([key, value]) => {
@@ -233,9 +246,17 @@ function Map() {
     return (
         <mesh ref={meshRef} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[10, 10, 128, 128]} />
-            {/* <boxGeometry args={[10, 10, 2, 128, 128, 2]} /> */}
             {grouped_vertices.length > 0 && grouped_vertices.map(([x, y, value, ox, oy]) => (
-                <TextOnHover position={[x, y, 6]} u_value={ox} u_max={max_weight} radius={0.15} x={ox} y={oy} />
+                <TextOnHover
+                    key={`${ox}-${oy}`}
+                    position={[x, y, 6]}
+                    u_value={ox}
+                    u_max={max_weight}
+                    radius={0.15}
+                    x={ox}
+                    y={oy}
+                    onHover={onHover}
+                />
             ))}
             <shaderMaterial
                 fragmentShader={graphFragmentShader}
@@ -247,73 +268,63 @@ function Map() {
             />
         </mesh>
     );
-};
-function TextOnHover(props) {
+}
+
+function TextOnHover({ position, radius, x, y, onHover }) {
     const [isHovered, setIsHovered] = useState(false);
     const meshRef = React.useRef();
-    const textRef = React.useRef();
-    const x = props.x;
-    const y = props.y;
-    useFrame(({ clock }) => {
-        textRef.visible = isHovered;
-    });
-    const uniforms = useMemo(
-        () => ({
-            u_value: { value: props.u_value },
-            u_max: { value: props.u_max },
-        }),
-        []
-    );
-    return (
-        <mesh ref={meshRef} position={props.position} onPointerEnter={() => setIsHovered(true)} onPointerLeave={() => setIsHovered(false)}>
-            <sphereGeometry
-                args={[props.radius, 10, 10]}
-            />
 
-            <shaderMaterial
-                fragmentShader={pointFragmentShader}
-                vertexShader={pointVertexShader}
-                uniforms={uniforms}
-            />
-            {isHovered && (
+    const handleHover = (hovered) => {
+        setIsHovered(hovered);
+        if (hovered) {
+            onHover(x, y); // Pass data to parent
+        }
+    };
+
+    return (
+        <mesh
+            ref={meshRef}
+            position={position}
+            onPointerEnter={() => handleHover(true)}
+            onPointerLeave={() => handleHover(false)}
+        >
+            <sphereGeometry args={[radius, 10, 10]} />
+            <shaderMaterial />
+        </mesh>
+    );
+}
+
+/*
+{isHovered && (
                 <Html>
-                    <div className='VertexPopup' color="white">
+                    <div className='VertexPopup'>
                         <p>Acousticness: {x}</p>
                         <p>Energy: {y}</p>
                     </div>
                 </Html>
             )}
 
-        </mesh>
+*/
 
-    );
-};
 const Graph = () => {
-    const mapRef = React.useRef();
-    const canvasRef = React.useRef();
-    const isTesting = false;
-    // const [history, setHistory] = useState(0);
-    // const handleClick = () => {
-    //     if (history == 0) {
-    //         setHistory(1);
-    //     } else {
-    //         setHistory(0);
-    //     }
-    // }
+    const [selectedData, setSelectedData] = useState({ acousticness: null, energy: null });
+
+    const handleHover = (acousticness, energy) => {
+        setSelectedData({ acousticness, energy });
+    };
+
     return (
         <PageContainer>
             <DataContainer>
                 <GraphicContainer>
-                    <Canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} camera={
-                        {
+                    <Canvas
+                        style={{ width: '100%', height: '100%' }}
+                        camera={{
                             fov: 65,
                             position: [0.0, 5.5, 15.0],
-                        }
-                    } shadows>
-                        {/*Toggle grid and axes*/}
-                        {isTesting ? <axesHelper args={[2]} /> : null}
-                        {isTesting ? <gridHelper /> : null}
-                        {/*Instantiate rotating box as functional component*/}
+                        }}
+                        shadows
+                    >
                         <OrbitControls
                             enablePan={false}
                             enableDamping={true}
@@ -322,24 +333,20 @@ const Graph = () => {
                             minPolarAngle={-Math.PI / 4}
                             minDistance={10.0}
                             maxDistance={20.0}
-
                             zoomSpeed={0.5}
                         />
-                        <Map ref={mapRef} />
+                        <Map onHover={handleHover} />
                     </Canvas>
                 </GraphicContainer>
                 <BlurbContainer>
-                    <BlurbBox>
-                        Acoustic & Energy Map.
-                    </BlurbBox>
+                    <BlurbBox>Acoustic & Energy Map.</BlurbBox>
                 </BlurbContainer>
             </DataContainer>
-            
             <DetailContainer>
                 <DetailBox>
-                    Genre Data
+                    <p>Acousticness: {selectedData.acousticness ?? 'N/A'}</p>
+                    <p>Energy: {selectedData.energy ?? 'N/A'}</p>
                 </DetailBox>
-                
             </DetailContainer>
         </PageContainer>
     );
