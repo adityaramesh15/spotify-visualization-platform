@@ -135,19 +135,23 @@ const graphFragmentShader = `
 varying vec2 vUv;
 varying float vDisp;
 
-vec3 acoustic_high = vec3(0.52, 0.05, 0.05);
-vec3 acoustic_low = vec3(0.08, 0.05, 0.52);
-vec3 acoustic_high_intense = vec3(1.00, 0.60, 0.60);
-vec3 acoustic_low_intense = vec3(0.69, 0.73, 1.00);
+vec3 acoustic_high = vec3(0.33, 0.00, 0.04);
+vec3 acoustic_low = vec3(0.00, 0.01, 0.33);
+vec3 acoustic_high_intense = vec3(1.00, 0.00, 0.13);
+vec3 acoustic_low_intense = vec3(0.00, 0.12, 1.00);
 vec3 intensity_high = vec3(0.96, 0.99, 0.98);
+vec3 energy_high_acoustic_low = vec3(0.62, 0.64, 1.00);
+vec3 energy_high_acoustic_high = vec3(1.00, 0.46, 0.46);
 
 void main() {
-  vec3 a_color = mix(acoustic_low, acoustic_low_intense, vDisp);
-  vec3 b_color = mix(acoustic_high, acoustic_high_intense, vDisp);
+  vec3 acoustic_low_color = mix(energy_high_acoustic_low, acoustic_low,  vUv.y);
+  vec3 acoustic_high_color = mix(energy_high_acoustic_high, acoustic_high, vUv.y);
 
-  vec3 i_color = mix(a_color, b_color, vUv.x);
+  vec3 intensity_color_low = mix(acoustic_low_color, acoustic_low_intense, vDisp);
+  vec3 intensity_color_high = mix(acoustic_high_color, acoustic_high_intense, vDisp);
+  vec3 final_color = mix(intensity_color_low, intensity_color_high, vUv.x);
 
-  gl_FragColor = vec4(i_color,1.0);
+  gl_FragColor = vec4(final_color,1.0);
 }
 `
 
@@ -184,8 +188,8 @@ function vertexSort(a, b) {
     }
 }
 
-function Map({onHover}) {
-    const meshRef = React.useRef();  
+function Map({ onHover }) {
+    const meshRef = React.useRef();
     const genreMapURL = useAuthStore(state => (state.genreMap));
     const genreDict = useAuthStore(state => (state.genreDurations));
     const [grouped_vertices, setGroupedVertices] = useState([]);
@@ -251,7 +255,7 @@ function TextOnHover({ position, radius, x, y, onHover, color_val }) {
 
     const uniforms = useMemo(
         () => ({
-            u_value: {value: color_val}
+            u_value: { value: color_val }
         }),
         []
     );
@@ -264,7 +268,7 @@ function TextOnHover({ position, radius, x, y, onHover, color_val }) {
             onPointerLeave={() => handleHover(false)}
         >
             <sphereGeometry args={[radius, 10, 10]} />
-            <shaderMaterial 
+            <shaderMaterial
                 fragmentShader={pointFragmentShader}
                 vertexShader={pointVertexShader}
                 uniforms={uniforms}
