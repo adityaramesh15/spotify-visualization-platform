@@ -38,7 +38,28 @@ const Callback = () => {
             } else {
                 console.error('Error from backend:');
             }
+            
+        } catch (error) {
+            console.error('Error saving user to backend:', error);
+        }
+    };
 
+    const durationTest = async (access_token) => {
+        try {
+            
+            const response = await fetch("http://localhost:5050/api/genre-durations", {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json', // Add headers for content type
+                }, 
+                body: JSON.stringify({ access_token }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Durations:', data);
+            } else {
+                console.error('Error from backend:');
+            }
             
         } catch (error) {
             console.error('Error saving user to backend:', error);
@@ -52,6 +73,7 @@ const Callback = () => {
         console.log("Spotify Token: ", _spotifyToken)
 
         if (_spotifyToken) {
+            durationTest(_spotifyToken);
             saveUserToBackend(_spotifyToken);
         } else {
             console.error('Access token not found in URL');
