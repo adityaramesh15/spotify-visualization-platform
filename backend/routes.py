@@ -39,9 +39,13 @@ def get_raw_acoustic_map():
 
     
 
+    
+
     user = UserDB.query.filter_by(spotify_id=spotify_id).first()
     if not user:
         return jsonify({'error': 'UserDB not found'}), 404
+    
+   
     
     
     

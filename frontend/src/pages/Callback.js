@@ -57,12 +57,11 @@ const Callback = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Backend response:', data);
-                //navigate('/graph');
+                navigate('/graph');
                 
             } else {
                 console.error('Error from backend:');
             }
-
             
         } catch (error) {
             console.error('Error saving user to backend:', error);
