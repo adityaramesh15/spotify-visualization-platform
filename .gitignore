@@ -254,4 +254,6 @@ lerna-debug.log
 .DS_Store
 Thumbs.db
 
-data/
+tracks_features.csv
+
+/data
