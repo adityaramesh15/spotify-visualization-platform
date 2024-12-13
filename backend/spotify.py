@@ -55,38 +55,38 @@ class Spotify:
         return acoustic_energy_map
     
         
-if __name__ == '__main__':
-    import os
-    import spotipy
-    from spotipy.oauth2 import SpotifyOAuth
+# if __name__ == '__main__':
+#     import os
+#     import spotipy
+#     from spotipy.oauth2 import SpotifyOAuth
 
-    # This will handle the OAuth flow
-    sp = Spotify(
-        access_token=None
-    )
+#     # This will handle the OAuth flow
+#     sp = Spotify(
+#         access_token=None
+#     )
     
-    # If the Spotify class relies on self.sp being initialized via OAuth:
-    # Re-initialize self.sp using SpotifyOAuth:
-    sp.sp = spotipy.Spotify(
-        auth_manager=SpotifyOAuth(
-            client_id='95ca60eb49ba46469aa30652ef562422',
-            client_secret='877830392dbf4de38e428a35388ae570',
-            redirect_uri='http://localhost:3000',
-            scope="user-library-read playlist-read-private user-top-read"  # Adjust scopes as needed
-        )
-    )
+#     # If the Spotify class relies on self.sp being initialized via OAuth:
+#     # Re-initialize self.sp using SpotifyOAuth:
+#     sp.sp = spotipy.Spotify(
+#         auth_manager=SpotifyOAuth(
+#             client_id='95ca60eb49ba46469aa30652ef562422',
+#             client_secret='877830392dbf4de38e428a35388ae570',
+#             redirect_uri='http://localhost:3000',
+#             scope="user-library-read playlist-read-private user-top-read"  # Adjust scopes as needed
+#         )
+#     )
 
-    # Now test your function. For example:
-    result = sp.get_acoustic_map()
-    print("Acoustic Energy Map Results:")
-    for k, v in result.items():
-        print(k, v)
+#     # Now test your function. For example:
+#     result = sp.get_acoustic_map()
+#     print("Acoustic Energy Map Results:")
+#     for k, v in result.items():
+#         print(k, v)
         
-    genre_map = GenreMap(matrix_size=128, sigma=5)
-    image = genre_map.generate_map(result)
+#     genre_map = GenreMap(matrix_size=128, sigma=5)
+#     image = genre_map.generate_map(result)
 
 
-    image.save("genre_map_output.png")
+#     image.save("genre_map_output.png")
         
         
         
