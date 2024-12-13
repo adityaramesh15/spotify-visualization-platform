@@ -134,7 +134,6 @@ void main() {
 
 const pointVertexShader = `
 uniform float u_value;
-uniform float u_max;
 
 void main() {
   vec4 pos = vec4(position, 1.0);
@@ -148,7 +147,6 @@ void main() {
 
 const pointFragmentShader = `
     uniform float u_value;
-    uniform float u_max;
 
     vec3 acoustic_high = vec3(1.00, 0.14, 0.14);
     vec3 acoustic_low = vec3(0.15, 0.09, 0.98);
@@ -167,68 +165,19 @@ function vertexSort(a, b) {
     }
 }
 
-function Map({ genreDurations, onHover}) {
-    const meshRef = React.useRef();
-    const acoustic_energy_map = {
-        "0.10,0.23": 12.5,
-        "0.87,0.45": 30.0,
-        "0.05,0.90": 45.3,
-        "0.42,0.31": 22.1,
-        "0.99,0.02": 10.0,
-        "0.56,0.77": 35.7,
-        "0.33,0.11": 18.2,
-        "0.25,0.60": 40.5,
-        "0.47,0.88": 50.0,
-        "0.63,0.14": 5.9,
-        "0.11,0.55": 26.4,
-        "0.78,0.34": 15.3,
-        "0.09,0.81": 55.2,
-        "0.66,0.66": 29.0,
-        "0.84,0.19": 7.7,
-        "0.23,0.93": 42.1,
-        "0.45,0.45": 33.0,
-        "0.12,0.37": 14.8,
-        "0.59,0.99": 58.0,
-        "0.71,0.27": 16.6,
-        "0.05,0.50": 20.5,
-        "0.95,0.95": 60.0,
-        "0.30,0.24": 9.9,
-        "0.48,0.53": 34.2,
-        "0.20,0.85": 48.3,
-        "0.77,0.59": 27.7,
-        "0.04,0.44": 12.1,
-        "0.38,0.72": 36.4,
-        "0.89,0.10": 11.5,
-        "0.15,0.15": 8.0,
-        "0.53,0.38": 25.0,
-        "0.28,0.91": 45.8,
-        "0.64,0.05": 6.3,
-        "0.86,0.47": 31.1,
-        "0.19,0.75": 40.9,
-        "0.02,0.28": 10.2,
-        "0.50,0.50": 23.5,
-        "0.61,0.17": 13.4,
-        "0.90,0.90": 59.9,
-        "0.35,0.62": 21.2,
-        "0.08,0.33": 17.5,
-        "0.22,0.07": 4.8,
-        "0.44,0.99": 52.3,
-        "0.83,0.53": 39.0,
-        "0.16,0.40": 19.7,
-        "0.75,0.25": 29.9,
-        "0.68,0.83": 46.1,
-        "0.92,0.66": 32.6,
-        "0.57,0.04": 6.8,
-        "0.29,0.58": 24.9
-    };
+function Map({onHover}) {
+    const meshRef = React.useRef();  
+    const genreMapURL = useAuthStore(state => (state.genreMap));
+    const genreDict = useAuthStore(state => (state.genreDurations));
     const [grouped_vertices, setGroupedVertices] = useState([]);
     const [max_weight, setMaxWeight] = useState(0);
-    const displacementMapArray = useLoader(TextureLoader, ['/textures/genre_map_output.png']);
+    const displacementMapArray = useLoader(TextureLoader, [genreMapURL]);
     const displacementMap = displacementMapArray[0];
 
     useEffect(() => {
         let dummy_vertices = [[]];
-        Object.entries(acoustic_energy_map).map(([key, value]) => {
+        let count = 0;
+        Object.entries(genreDict).map(([key, value]) => {
             if (value > max_weight) {
                 setMaxWeight(value);
             }
@@ -236,11 +185,12 @@ function Map({ genreDurations, onHover}) {
             const x = MathUtils.mapLinear(Number(xy[0]), 0.0, 1.0, -5.0, 5.0);
             const y = MathUtils.mapLinear(Number(xy[1]), 0.0, 1.0, 5.0, -5.0);
             const pt = [x, y, value, xy[0], xy[1]];
+            count += 1;
             dummy_vertices.push(pt);
         });
         dummy_vertices.sort(vertexSort);
-        const top_five = dummy_vertices.slice(0, 5);
-        setGroupedVertices(top_five);
+        const top_entries = dummy_vertices.slice(0, 5);
+        setGroupedVertices(top_entries);
     }, []);
 
     return (
@@ -250,11 +200,10 @@ function Map({ genreDurations, onHover}) {
                 <TextOnHover
                     key={`${ox}-${oy}`}
                     position={[x, y, 6]}
-                    u_value={ox}
-                    u_max={max_weight}
                     radius={0.15}
                     x={ox}
                     y={oy}
+                    color_val={ox}
                     onHover={onHover}
                 />
             ))}
@@ -270,7 +219,7 @@ function Map({ genreDurations, onHover}) {
     );
 }
 
-function TextOnHover({ position, radius, x, y, onHover }) {
+function TextOnHover({ position, radius, x, y, onHover, color_val }) {
     const [isHovered, setIsHovered] = useState(false);
     const meshRef = React.useRef();
 
@@ -281,6 +230,13 @@ function TextOnHover({ position, radius, x, y, onHover }) {
         }
     };
 
+    const uniforms = useMemo(
+        () => ({
+            u_value: {value: color_val}
+        }),
+        []
+    );
+
     return (
         <mesh
             ref={meshRef}
@@ -289,7 +245,11 @@ function TextOnHover({ position, radius, x, y, onHover }) {
             onPointerLeave={() => handleHover(false)}
         >
             <sphereGeometry args={[radius, 10, 10]} />
-            <shaderMaterial />
+            <shaderMaterial 
+                fragmentShader={pointFragmentShader}
+                vertexShader={pointVertexShader}
+                uniforms={uniforms}
+            />
         </mesh>
     );
 }

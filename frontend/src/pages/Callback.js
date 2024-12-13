@@ -61,6 +61,9 @@ const Callback = () => {
 
             if (response.ok) {
                 console.log('Genre map successfully created');
+                const blob = await response.blob();
+                const fileURL = URL.createObjectURL(blob);
+                setGenreMap(fileURL); // Store the file URL in Zustand
             } else {
                 console.error('Error sending genre durations to genre map:', await response.text());
             }
