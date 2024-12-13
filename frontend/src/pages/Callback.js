@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 
+
 const Callback = () => {
     const navigate = useNavigate();
     const setGenreDurations = useAuthStore((state) => state.setGenreDurations);
@@ -34,7 +35,6 @@ const Callback = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log('Fetched genre durations:', data);
                 setGenreDurations(data);
                 await sendToGenreMap(accessToken, data);
                 navigate('/graph');
@@ -60,7 +60,6 @@ const Callback = () => {
             });
 
             if (response.ok) {
-                console.log('Genre map successfully created');
                 const blob = await response.blob();
                 const fileURL = URL.createObjectURL(blob);
                 setGenreMap(fileURL); // Store the file URL in Zustand
@@ -97,10 +96,8 @@ const Callback = () => {
     };
 
     useEffect(() => {
-        console.log("This is what we get from the URL: ", getTokenFromURL());
         const _spotifyToken = getTokenFromURL().access_token;
-        // window.location.hash = "";
-        console.log("Spotify Token: ", _spotifyToken)
+        window.location.hash = "";
 
         if (_spotifyToken) {
             saveUserToBackend(_spotifyToken);

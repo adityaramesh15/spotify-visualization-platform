@@ -34,7 +34,7 @@ const DetailContainer = styled.div`
 
 const DetailBox = styled.div`
     width: 250px;
-    height: 375px;
+    height: 250px;
     border-radius: 15px;
     box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.6);
     padding: 25px;
@@ -80,6 +80,25 @@ const BlurbBox = styled.div`
     font-family: 'Neue Haas Grotesk', sans-serif;
     font-size: 48px;
     user-select: none;
+`;
+
+const DescriptionContainer = styled.div`
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 300px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #FFFDD0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Neue Haas Grotesk', sans-serif;
+    font-size: 16px;
+    z-index: 3;
+    color: #333;
+`;
+
+const SecondaryDecsriptionContainer = styled(DescriptionContainer)`
+    bottom: 100px;
 `;
 
 const HistoryButton = styled.button`
@@ -303,15 +322,21 @@ const Graph = () => {
                     </Canvas>
                 </GraphicContainer>
                 <BlurbContainer>
-                    <BlurbBox>Acoustic & Energy Map.</BlurbBox>
+                    <BlurbBox>Your Music Style.</BlurbBox>
                 </BlurbContainer>
             </DataContainer>
             <DetailContainer>
                 <DetailBox>
-                    <p>Acousticness: {selectedData.acousticness ?? 'N/A'}</p>
-                    <p>Energy: {selectedData.energy ?? 'N/A'}</p>
+                    <p>Acoustic: {Number(selectedData.acousticness).toFixed(2) ?? 'N/A'}</p>
+                    <p>Energy: {Number(selectedData.energy).toFixed(2) ?? 'N/A'}</p>
                 </DetailBox>
             </DetailContainer>
+            <SecondaryDecsriptionContainer>
+            <p>Energy is shown from light to dark.</p>
+            </SecondaryDecsriptionContainer>
+            <DescriptionContainer>
+                <p>Acousticness is shown from Blue to Red.</p>
+            </DescriptionContainer>
         </PageContainer>
     );
 };
