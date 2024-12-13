@@ -97,6 +97,10 @@ const DescriptionContainer = styled.div`
     color: #333;
 `;
 
+const SecondaryDecsriptionContainer = styled(DescriptionContainer)`
+    bottom: 100px;
+`;
+
 const HistoryButton = styled.button`
     background-color: #1DB954;
     border: none;
@@ -323,6 +327,9 @@ const Graph = () => {
                     <p>Energy: {Number(selectedData.energy).toFixed(2) ?? 'N/A'}</p>
                 </DetailBox>
             </DetailContainer>
+            <SecondaryDecsriptionContainer>
+            <p>Energy is shown from light to dark.</p>
+            </SecondaryDecsriptionContainer>
             <DescriptionContainer>
                 <p>Acousticness is shown from Blue to Red.</p>
             </DescriptionContainer>
