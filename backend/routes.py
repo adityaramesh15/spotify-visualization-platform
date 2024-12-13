@@ -76,26 +76,24 @@ def get_raw_acoustic_map():
 def genre_map_route():
     data = request.json
     access_token = data.get('access_token')
+    genre_durations = data.get('genre_durations')
 
-    spotify = Spotify(access_token)
-    spotify_UserDB = spotify.get_id()
-    spotify_id = spotify_UserDB['id']
-
-    UserDB = UserDB.query.filter_by(spotify_id=spotify_id).first()
-    if not UserDB:
-        return jsonify({'error': 'UserDB not found'}), 404
+    # user = UserDB.query.filter_by(spotify_id=spotify_id).first()
+    # if not user:
+    #     return jsonify({'error': 'UserDB not found'}), 404
 
 
-    genres = GenreDB.query.filter_by(UserDB_id=UserDB.id).all()
-    if not genres:
-        return jsonify({'error': 'No genre data available'}), 404
+    # genres = GenreDB.query.filter_by(UserDB_id=user.id).all()
+    # if not genres:
+    #     return jsonify({'error': 'No genre data available'}), 404
 
-    genre_dict = {
-        tuple(map(int, genre.coord.split(','))): genre.duration for genre in genres
-    }
+    
+    # genre_dict = {
+    #     tuple(map(int, genre.coord.split(','))): genre.duration for genre in genres
+    # }
 
     genre_map = GenreMap(matrix_size=100, sigma=5)
-    heatmap_image = genre_map.generate_map(genre_dict)
+    heatmap_image = genre_map.generate_map(genre_durations)
 
 
     img_io = io.BytesIO()

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Stats, OrbitControls, Html } from '@react-three/drei'
 import { TextureLoader, MathUtils } from 'three';
-import { create } from 'zustand';
+import useAuthStore from '../stores/authStore';
 import styled from 'styled-components';
 
 const PageContainer = styled.div`
@@ -167,7 +167,7 @@ function vertexSort(a, b) {
     }
 }
 
-function Map({onHover}) {
+function Map({ genreDurations, onHover}) {
     const meshRef = React.useRef();
     const acoustic_energy_map = {
         "0.10,0.23": 12.5,

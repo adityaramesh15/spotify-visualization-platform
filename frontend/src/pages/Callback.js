@@ -5,6 +5,7 @@ import useAuthStore from '../stores/authStore';
 const Callback = () => {
     const navigate = useNavigate();
     const setGenreDurations = useAuthStore((state) => state.setGenreDurations);
+    const setGenreMap = useAuthStore((state) => state.setGenreMap);
 
     const getTokenFromURL = () => {
         try {
@@ -35,12 +36,36 @@ const Callback = () => {
                 const data = await response.json();
                 console.log('Fetched genre durations:', data);
                 setGenreDurations(data);
+                await sendToGenreMap(accessToken, data);
                 navigate('/graph');
             } else {
                 console.error('Error fetching genre durations:', await response.text());
             }
         } catch (error) {
             console.error('Error fetching genre durations:', error);
+        }
+    };
+
+    const sendToGenreMap = async (accessToken, genreDurations) => {
+        try {
+            const response = await fetch('http://localhost:5050/api/genre-map', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                    genre_durations: genreDurations,
+                }),
+            });
+
+            if (response.ok) {
+                console.log('Genre map successfully created');
+            } else {
+                console.error('Error sending genre durations to genre map:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error sending genre durations to genre map:', error);
         }
     };
 
@@ -57,7 +82,7 @@ const Callback = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Backend response:', data);
-                navigate('/graph');
+                //navigate('/graph');
                 
             } else {
                 console.error('Error from backend:');
